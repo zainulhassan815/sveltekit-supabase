@@ -28,15 +28,15 @@ A production-ready SvelteKit application with Supabase authentication, Row-Level
 
 ```mermaid
 flowchart LR
-    A[Request] --> B[hooks.server.ts]
-    B --> C[safeGetSession]
-    C --> D[getUser - JWT Validation]
-    D --> E{Valid?}
-    E -->|Yes| F[Continue to Route]
-    E -->|No| G[Redirect to Login]
-    F --> H{Protected Route?}
-    H -->|Yes| I[Load with User Context]
-    H -->|No| J[Public Access]
+    A["Request"] --> B["hooks.server.ts"]
+    B --> C["safeGetSession"]
+    C --> D["getUser - JWT Validation"]
+    D --> E{"Valid?"}
+    E -->|"Yes"| F["Continue to Route"]
+    E -->|"No"| G["Redirect to Login"]
+    F --> H{"Protected Route?"}
+    H -->|"Yes"| I["Load with User Context"]
+    H -->|"No"| J["Public Access"]
 ```
 
 **Key Security Decision**: We use `safeGetSession()` which calls `getUser()` to validate JWTs server-side, rather than trusting the unvalidated session from `getSession()`.
@@ -46,20 +46,20 @@ flowchart LR
 ```mermaid
 sequenceDiagram
     participant Browser
-    participant Hooks as hooks.server.ts
-    participant Load as +page.server.ts
+    participant Hooks as "hooks.server.ts"
+    participant Load as "+page.server.ts"
     participant Supabase
-    participant RLS as Row-Level Security
+    participant RLS as "Row-Level Security"
 
-    Browser->>Hooks: Request /projects
-    Hooks->>Supabase: safeGetSession()
-    Supabase-->>Hooks: User + Session
-    Hooks->>Load: event.locals.user
-    Load->>Supabase: from('projects').select()
-    Supabase->>RLS: Check user_id = auth.uid()
-    RLS-->>Supabase: Filtered rows
-    Supabase-->>Load: User's projects only
-    Load-->>Browser: Render page
+    Browser->>Hooks: "Request /projects"
+    Hooks->>Supabase: "safeGetSession()"
+    Supabase-->>Hooks: "User + Session"
+    Hooks->>Load: "event.locals.user"
+    Load->>Supabase: "from('projects').select()"
+    Supabase->>RLS: "Check user_id = auth.uid()"
+    RLS-->>Supabase: "Filtered rows"
+    Supabase-->>Load: "User's projects only"
+    Load-->>Browser: "Render page"
 ```
 
 ### Row-Level Security
@@ -87,23 +87,23 @@ flowchart TB
     end
 
     subgraph Auth["/auth"]
-        A1[login]
-        A2[signup]
-        A3[logout]
-        A4[callback]
-        A5[forgot-password]
-        A6[reset-password]
+        A1["login"]
+        A2["signup"]
+        A3["logout"]
+        A4["callback"]
+        A5["forgot-password"]
+        A6["reset-password"]
     end
 
     subgraph Projects["/projects"]
         P1["/ - List"]
         P2["/new - Create"]
-        P3["/[id] - View/Edit/Delete"]
+        P3["/id - View/Edit/Delete"]
     end
 
     subgraph API["/api"]
         API1["/projects - GET, POST"]
-        API2["/projects/[id] - GET, PATCH, DELETE"]
+        API2["/projects/id - GET, PATCH, DELETE"]
         API3["/user - GET, PATCH"]
     end
 
