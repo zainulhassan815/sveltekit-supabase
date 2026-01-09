@@ -1,0 +1,15 @@
+# Package manager
+node_modules
+package-lock.json
+pnpm-lock.yaml
+
+# Build output
+.svelte-kit
+build
+dist
+
+# Generated files
+src/lib/database.types.ts
+
+# Supabase
+supabase/.temp
